@@ -32,3 +32,23 @@ json_string = """[{"segmentation": {"size": [1500, 2250], "counts": "0f2V\\10000
 
 parsed_json = json.loads(json_string.replace('\\', ''))
 
+semantic_dict = [(p['class_proposals'], p['bbox']) for p in parsed_json]
+
+import ollama
+import random
+import string
+
+# def generate(prompt, model='dolphin-llama3'):
+def generate(prompt, model='llama3.1'):
+    response = ollama.chat(model=model, messages=[
+      {
+        'role': 'user',
+        'content': prompt,
+      },
+    ])
+    return response['message']['content']
+
+generate(f"""This is the list of tuples, where the first element is the text corresponding to an object and the second element is the bounding box of that object: {str(semantic_dict)}
+Where is the frisbee?
+""")
+
